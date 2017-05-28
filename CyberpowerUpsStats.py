@@ -11,10 +11,10 @@ from influxdb.exceptions import InfluxDBClientError
 __author__ = 'Matthew Carey'
 
 
-class CyberpowerUpsStats():
+class CyberpowerUpsStats(object):
     def __init__(self):
 
-        self.config = configManager()
+        self.config = ConfigManager()
         self.ups_address = self.config.ups_address
         self.ups_port = self.config.ups_port
         self.output = self.config.output
@@ -125,7 +125,7 @@ class CyberpowerUpsStats():
             time.sleep(self.delay)
 
 
-class configManager():
+class ConfigManager(object):
     def __init__(self):
         print('Loading Configuration File')
         config_file = os.path.join(os.getcwd(), 'config.ini')
