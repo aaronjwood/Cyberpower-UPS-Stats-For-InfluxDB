@@ -40,6 +40,8 @@ class CyberpowerUpsStats(object):
                 print('Database {} Does Not Exist.  Attempting To Create')
                 # TODO Grab exception here
                 self.influx_client.create_database(self.config.influx_database)
+            else:
+                print(e)
 
     def get_ups_data(self):
         """
