@@ -31,13 +31,13 @@ class CyberpowerUpsStats(object):
         """
         if self.output:
             print(json_data)
-        try:
-            self.influx_client.write_points(json_data)
-        except InfluxDBClientError as e:
-            if e.code == 404:
-                print('Database {} Does Not Exist.  Attempting To Create')
-                # TODO Grab exception here
-                self.influx_client.create_database(self.config.influx_database)
+            try:
+                self.influx_client.write_points(json_data)
+            except InfluxDBClientError as e:
+                if e.code == 404:
+                    print('Database {} Does Not Exist.  Attempting To Create')
+                    # TODO Grab exception here
+                    self.influx_client.create_database(self.config.influx_database)
 
     def get_ups_data(self):
         """
@@ -63,61 +63,28 @@ class CyberpowerUpsStats(object):
         self._process_ups_data(json_out)
 
     def _process_ups_data(self, ups_data):
-
-        # Utility Data
-        utility_json = [
+        self.write_influx_data([
             {
-                'measurement': 'utility_data',
+                'measurement': 'ups',
                 'fields': {
-                    'state': ups_data['status']['utility']['state'],
-                    'state_warning': ups_data['status']['utility']['stateWarning'],
-                    'voltage': ups_data['status']['utility']['voltage'],
-                },
-                'tags': {
-                    'ups': 'UPS1'
+                    'utility_state': ups_data['status']['utility']['state'],
+                    'output_state': ups_data['status']['output']['state'],
+                    'battery_state': ups_data['status']['battery']['state'],
+                    'utility_state_warning': ups_data['status']['utility']['stateWarning'],
+                    'output_state_warning': ups_data['status']['output']['stateWarning'],
+                    'battery_state_warning': ups_data['status']['battery']['stateWarning'],
+                    'utility_voltage': float(ups_data['status']['utility']['voltage']),
+                    'output_voltage': float(ups_data['status']['output']['voltage']),
+                    'battery_voltage': float(ups_data['status']['battery']['voltage']),
+                    'output_load': ups_data['status']['output']['load'],
+                    'output_watts': ups_data['status']['output']['watt'],
+                    'output_load_warning': ups_data['status']['output']['outputLoadWarning'],
+                    'battery_capacity': ups_data['status']['battery']['capacity'],
+                    'battery_runtime_hour': ups_data['status']['battery']['runtimeHour'],
+                    'battery_runtime_minute': ups_data['status']['battery']['runtimeMinute']
                 }
             }
-        ]
-
-        output_json = [
-            {
-                'measurement': 'output_data',
-                'fields': {
-                    'state': ups_data['status']['output']['state'],
-                    'state_warning': ups_data['status']['output']['stateWarning'],
-                    'voltage': ups_data['status']['output']['voltage'],
-                    'load': ups_data['status']['output']['load'],
-                    'watts': ups_data['status']['output']['watt'],
-                    'outputLoadWarning': ups_data['status']['output']['outputLoadWarning'],
-
-                },
-                'tags': {
-                    'ups': 'UPS1'
-                }
-            }
-        ]
-
-        battery_json = [
-            {
-                'measurement': 'output_data',
-                'fields': {
-                    'state': ups_data['status']['battery']['state'],
-                    'state_warning': ups_data['status']['battery']['stateWarning'],
-                    'voltage': ups_data['status']['battery']['voltage'],
-                    'capacity': ups_data['status']['battery']['capacity'],
-                    'runtimeHour': ups_data['status']['battery']['runtimeHour'],
-                    'runtimeMinute': ups_data['status']['battery']['runtimeMinute'],
-
-                },
-                'tags': {
-                    'ups': 'UPS1'
-                }
-            }
-        ]
-
-        self.write_influx_data(utility_json)
-        self.write_influx_data(output_json)
-        self.write_influx_data(battery_json)
+        ])
 
     def run(self):
         while True:
