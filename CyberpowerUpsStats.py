@@ -33,13 +33,13 @@ class CyberpowerUpsStats(object):
         """
         if self.output:
             print(json_data)
-            try:
-                self.influx_client.write_points(json_data)
-            except InfluxDBClientError as e:
-                if e.code == 404:
-                    print('Database {} Does Not Exist.  Attempting To Create')
-                    # TODO Grab exception here
-                    self.influx_client.create_database(self.config.influx_database)
+        try:
+            self.influx_client.write_points(json_data)
+        except InfluxDBClientError as e:
+            if e.code == 404:
+                print('Database {} Does Not Exist.  Attempting To Create')
+                # TODO Grab exception here
+                self.influx_client.create_database(self.config.influx_database)
 
     def get_ups_data(self):
         """
