@@ -1,16 +1,17 @@
+import configparser
+import json
 import os
 import sys
-import configparser
-from influxdb import InfluxDBClient
-from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
-from urllib.request import urlopen
-import json
 import time
+from urllib.request import urlopen
+
+from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBClientError
 
 __author__ = 'Matthew Carey'
 
-class CyberpowerUpsStats():
 
+class CyberpowerUpsStats():
     def __init__(self):
 
         self.config = configManager()
@@ -19,7 +20,8 @@ class CyberpowerUpsStats():
         self.output = self.config.output
         self.delay = self.config.delay
 
-        self.influx_client = InfluxDBClient(self.config.influx_address, self.config.influx_port, database=self.config.influx_database)
+        self.influx_client = InfluxDBClient(self.config.influx_address, self.config.influx_port,
+                                            database=self.config.influx_database)
 
     def write_influx_data(self, json_data):
         """
@@ -60,14 +62,13 @@ class CyberpowerUpsStats():
 
         self._process_ups_data(json_out)
 
-
     def _process_ups_data(self, ups_data):
 
         # Utility Data
         utility_json = [
             {
                 'measurement': 'utility_data',
-                'fields' : {
+                'fields': {
                     'state': ups_data['status']['utility']['state'],
                     'state_warning': ups_data['status']['utility']['stateWarning'],
                     'voltage': ups_data['status']['utility']['voltage'],
@@ -81,7 +82,7 @@ class CyberpowerUpsStats():
         output_json = [
             {
                 'measurement': 'output_data',
-                'fields' : {
+                'fields': {
                     'state': ups_data['status']['output']['state'],
                     'state_warning': ups_data['status']['output']['stateWarning'],
                     'voltage': ups_data['status']['output']['voltage'],
@@ -99,7 +100,7 @@ class CyberpowerUpsStats():
         battery_json = [
             {
                 'measurement': 'output_data',
-                'fields' : {
+                'fields': {
                     'state': ups_data['status']['battery']['state'],
                     'state_warning': ups_data['status']['battery']['stateWarning'],
                     'voltage': ups_data['status']['battery']['voltage'],
@@ -125,7 +126,6 @@ class CyberpowerUpsStats():
 
 
 class configManager():
-
     def __init__(self):
         print('Loading Configuration File')
         config_file = os.path.join(os.getcwd(), 'config.ini')
@@ -154,11 +154,10 @@ class configManager():
         self.ups_address = self.config['UPS']['Address']
         self.ups_port = self.config['UPS'].get('Port', fallback=3052)
 
-def main():
 
+def main():
     ups_stats = CyberpowerUpsStats()
     ups_stats.run()
-
 
 
 if __name__ == '__main__':
