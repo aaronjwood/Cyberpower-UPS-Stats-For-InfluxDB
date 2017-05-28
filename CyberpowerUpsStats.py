@@ -82,7 +82,8 @@ class CyberpowerUpsStats(object):
                     'battery_voltage': float(ups_data['status']['battery']['voltage']),
                     'output_load': float(ups_data['status']['output']['load']),
                     'output_watts': float(ups_data['status']['output']['watt']),
-                    'output_amps': float(ups_data['status']['output']['watt']) / float(ups_data['status']['output']['voltage']),
+                    'output_amps': float(ups_data['status']['output']['watt']) / float(
+                        ups_data['status']['output']['voltage']),
                     'output_load_warning': ups_data['status']['output']['outputLoadWarning'],
                     'battery_capacity': ups_data['status']['battery']['capacity'],
                     'battery_runtime_hour': ups_data['status']['battery']['runtimeHour'],
