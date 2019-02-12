@@ -67,7 +67,7 @@ class CyberpowerUpsStats(object):
 
         decoded_data = ups_data.decode('utf-8')
         parsed_data = dict(item.split('=')
-                           for item in decoded_data.split('\n', 1)[1].split('\n'))
+                           for item in decoded_data.split('\n', 1)[1].split('\n') if item)
         parsed_data['output_volt'] = float(parsed_data['output_volt']) / 1000
         parsed_data['load'] = float(parsed_data['load']) / 1000
         parsed_data['output_watts'] = (float(
