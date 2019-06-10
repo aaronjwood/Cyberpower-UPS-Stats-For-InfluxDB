@@ -61,7 +61,7 @@ class CyberpowerUpsStats(object):
         message = b'STATUS\n\n'
         try:
             sock.sendall(message)
-            ups_data = sock.recv(373)  # 373 bytes gets us the whole message.
+            ups_data = sock.recv(1024)
         finally:
             sock.close()
 
